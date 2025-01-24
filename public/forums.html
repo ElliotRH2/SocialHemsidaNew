@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="assets/colors.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="sidebarLoggedIn.css">
+    <link rel="stylesheet" href="messages.css">
+</head>
+<body>
+    <header id="header">
+        <div id="logo">
+            <h1 class="headerTitle"></h1>
+        </div>
+        <nav class="headerNav">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#"><p id="usernameHeader"></p></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+          <img src="logo\logochat.png" alt="logo" />
+          <h2>Chat</h2>
+        </div>
+        <ul class="sidebar-links">
+          <h4>
+            <span>Main Menu</span>
+            <div class="menu-separator"></div>
+          </h4>
+          <h4>
+            <span>General</span>
+            <div class="menu-separator"></div>
+          </h4>
+          <li>
+            <a href="#"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\chatIcon.png"
+                  alt=""></span>Chat</a>
+          </li>
+          <li>
+            <a href="#"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\forumIcon.png"
+                  alt="logo" /></span>Forum</a>
+          </li>
+          <h4>
+            <span>Account</span>
+            <div class="menu-separator"></div>
+          </h4>
+          <li>
+            <a href="#"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\profileIcon.png"
+                  alt=""></span>Profile</a>
+          </li>
+          <li>
+            <a href="#"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\settingsIcon.png"
+                  alt=""></span>Settings</a>
+          </li>
+          <li>
+            <a href="/logout"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\logoutIcon.png"
+                  alt=""></span>Logout</a>
+          </li>
+        </ul>
+        </div>
+      </aside>
+    
+    <h1 class="logInText">Make a post</h1>
+    <form action="/forumPost" method="POST">
+        <label for="forumMessage">Message:</label>
+        <input type="text" id="forumMessage" name="forumMessage" required><br><br>
+        <div class="buttonContainer">
+            <button type="submit">Post</button>
+        </div>
+    </form>
+
+    <hr style="color: black; width: 100%; height: 2px; margin: 20px;">
+
+    <div id="messagesContainer" style="margin-top: 20px;">
+    </div>
+    
+    <script src="getCookie.js"></script>
+    <script src="fetchMessages.js"></script>
+</body>
+</html>

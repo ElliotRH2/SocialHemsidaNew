@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="assets/colors.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="header">
+        <div id="logo">
+            <h1 class="headerTitle">Website Title</h1>
+        </div>
+        <nav class="headerNav">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Log in</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <h1 class="logInText">Profile information</h1>
+    <form action="/getPersonalInfo" method="POST">
+        <label for="realName">Name:</label>
+        <input type="text" id="realName" name="realName" required><br><br>
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+        <div class="buttonContainer">
+            <button type="submit">Save</button>
+        </div>
+    </form>
+
+    <p>Delete an account? <a href="deleteAcc.html">Delete here</a></p>
+    
+</body>
+</html>

@@ -1,0 +1,94 @@
+/* Header styling */
+#header {
+    padding: 10px 16px; /* Default padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: top 0.3s ease-in-out;
+    position: sticky;
+    top: 0;
+    background: var(--header-color);
+    color: var(--white-text);
+    z-index: 1000;
+    width: 100%;
+    max-height: 55px;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+}
+
+#header h1 {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.headerNav ul {
+    list-style-type: none;
+    display: flex;
+}
+
+.headerNav ul li {
+    margin-right: 20px;
+    position: relative;
+    /* Allows us to position the pseudo-element relative to the parent link */
+}
+
+.headerNav ul li a {
+    color: var(--white-text);
+    text-decoration: none;
+    padding: 5px 0;
+    position: relative;
+}
+
+/* Add a pseudo-element for the underline effect */
+.headerNav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    left: 0;
+    bottom: -2px;
+    /* Positioning the line just under the text */
+    background-color: var(--white-text);
+    transition: width 0.3s ease-in-out;
+    /* Controls the animation */
+}
+
+/* On hover, expand the line from left to right */
+.headerNav ul li a:hover::after {
+    width: 100%;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    #header {
+        padding: 8px 12px; /* Less padding for smaller devices */
+    }
+}
+
+@media (max-width: 550px) {
+    #header div {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    #header {
+        padding: 6px 10px; /* Even less padding for very small devices */
+        font-size: 14px; /* Reduce font size for smaller screens */
+    }
+}
+
+@media (max-width: 400px) {
+    #header {
+        flex-wrap: wrap; 
+    }
+}

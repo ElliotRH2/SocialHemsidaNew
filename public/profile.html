@@ -6,6 +6,7 @@
     <title>Login Page</title>
     <link rel="stylesheet" href="assets/colors.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="sidebarLoggedIn.css">
 </head>
 <body>
     <header id="header">
@@ -14,26 +15,61 @@
         </div>
         <nav class="headerNav">
             <ul>
-                <li><a href="#">Home</a></li>
+                <li><a href="/loggedIn">Home</a></li>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
-                <li><a href="#">Log in</a></li>
             </ul>
         </nav>
     </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+          <img src="logo\logochat.png" alt="logo" />
+          <h2>Chat</h2>
+        </div>
+        <ul class="sidebar-links">
+          <h4>
+            <span>Main Menu</span>
+            <div class="menu-separator"></div>
+          </h4>
+          <h4>
+            <span>General</span>
+            <div class="menu-separator"></div>
+          </h4>
+          <li>
+            <a href="#"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\chatIcon.png"
+                  alt=""></span>Chat</a>
+          </li>
+          <li>
+            <a href="/forumPost"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\forumIcon.png"
+                  alt="logo" /></span>Forum</a>
+          </li>
+          <h4>
+            <span>Account</span>
+            <div class="menu-separator"></div>
+          </h4>
+          <li>
+            <a href="/profile"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\profileIcon.png"
+                  alt=""></span>Profile</a>
+          </li>
+          <li>
+            <a href="#"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\settingsIcon.png"
+                  alt=""></span>Settings</a>
+          </li>
+          <li>
+            <a href="/logout"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\logoutIcon.png"
+                  alt=""></span>Logout</a>
+          </li>
+        </ul>
+        </div>
+      </aside>
     
     <h1 class="logInText">Profile information</h1>
-    <form action="/getPersonalInfo" method="POST">
-        <label for="realName">Name:</label>
-        <input type="text" id="realName" name="realName" required><br><br>
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required><br><br>
-        <div class="buttonContainer">
-            <button type="submit">Save</button>
-        </div>
-    </form>
+    <label for="realName">Username:</label>
+    <input type="text" id="usernameDisplayInput" name="username"><br><br>
 
     <p>Delete an account? <a href="deleteAcc.html">Delete here</a></p>
     
+    <script src="profile.js"></script>
 </body>
 </html>

@@ -21,17 +21,16 @@
             </ul>
         </nav>
     </header>
-
-    <h1>Create an Account</h1>
-    <form action="/register" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-
-        <button type="submit">Register</button>
-    </form>
+    
+    <div class="registerContainerDiv">
+        <h1 class="registerText">Register</h1>
+        <form action="/register" method="POST">
+            <input placeholder="Username" type="text" id="username" name="username" required><br><br>
+            <input placeholder="Password" type="password" id="password" name="password" required><br><br>
+            <button type="submit" id="loginBtn">Register</button>
+        </form>
+    </div>
+    
     <p style="padding-top: 20px;">Already have an account? <a href="login.html">Login</a></p>
     <p>Delete an account? <a href="deleteAcc.html">Delete here</a></p>
 </body>

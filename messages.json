@@ -1,7 +1,65 @@
 [
   {
-    "message": "hello",
-    "username": "newuser",
-    "date": "2025-01-24T10:10:10.907Z"
+    "id": "1738928520842",
+    "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vel massa viverra metus sodales blandit. Donec ut tincidunt augue. Ut et nisi mi. Cras libero libero, posuere ut accumsan et, fermentum vel est. Suspendisse pellentesque molestie luctus.",
+    "username": "hejhej",
+    "imageLink": "https://c.tenor.com/Dfe5ZlH9c8kAAAAd/tenor.gif",
+    "date": "2025-02-07T11:42:00.842Z",
+    "comments": [
+      {
+        "user": "hejhej",
+        "commentMessage": "cool",
+        "date": "2025-02-07T11:42:13.067Z"
+      },
+      {
+        "user": "hejhej",
+        "commentMessage": "hej",
+        "date": "2025-02-07T11:42:18.312Z"
+      },
+      {
+        "user": "Randomuser",
+        "commentMessage": "hallå",
+        "date": "2025-02-07T11:45:59.401Z"
+      },
+      {
+        "user": "Randomuser",
+        "commentMessage": "hej hej hej",
+        "date": "2025-02-07T11:46:05.295Z"
+      },
+      {
+        "user": "Randomuser",
+        "commentMessage": "comment",
+        "date": "2025-02-07T11:46:09.303Z"
+      },
+      {
+        "user": "Randomuser",
+        "commentMessage": "1",
+        "date": "2025-02-07T11:46:16.830Z"
+      },
+      {
+        "user": "Randomuser",
+        "commentMessage": "dddd",
+        "date": "2025-02-07T12:09:22.411Z"
+      }
+    ]
+  },
+  {
+    "id": "1738932867691",
+    "message": "guys",
+    "username": "Randomuser",
+    "imageLink": "https://applescoop.org/image/wallpapers/mac/mountain-night-aurora-borealis-digital-scenery-art-4k-wallpaper-12-11-2024-1731442751-hd-wallpaper.jpg",
+    "date": "2025-02-07T12:54:27.691Z",
+    "comments": [
+      {
+        "user": "guy323",
+        "commentMessage": "yes?",
+        "date": "2025-02-07T12:55:19.684Z"
+      },
+      {
+        "user": "qwert",
+        "commentMessage": "what",
+        "date": "2025-02-07T12:57:09.177Z"
+      }
+    ]
   }
 ]

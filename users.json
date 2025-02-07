@@ -1,6 +1,22 @@
 [
   {
-    "name": "newuser",
+    "name": "Randomuser",
+    "password": "1"
+  },
+  {
+    "name": "user8",
+    "password": "1"
+  },
+  {
+    "name": "hejhej",
     "password": "123"
+  },
+  {
+    "name": "guy323",
+    "password": "1"
+  },
+  {
+    "name": "qwert",
+    "password": "1"
   }
 ]

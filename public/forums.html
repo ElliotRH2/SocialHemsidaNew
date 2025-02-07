@@ -16,7 +16,7 @@
         </div>
         <nav class="headerNav">
             <ul>
-                <li><a href="#">Home</a></li>
+                <li><a href="/loggedIn">Home</a></li>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
                 <li><a href="#"><p id="usernameHeader"></p></a></li>
@@ -43,7 +43,7 @@
                   alt=""></span>Chat</a>
           </li>
           <li>
-            <a href="#"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\forumIcon.png"
+            <a href="/forumPost"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\forumIcon.png"
                   alt="logo" /></span>Forum</a>
           </li>
           <h4>
@@ -51,7 +51,7 @@
             <div class="menu-separator"></div>
           </h4>
           <li>
-            <a href="#"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\profileIcon.png"
+            <a href="/profile"><span class="material-symbols-outlined"><img class="sidebarIcons" src="logo\profileIcon.png"
                   alt=""></span>Profile</a>
           </li>
           <li>
@@ -68,10 +68,10 @@
     
     <h1 class="logInText">Make a post</h1>
     <form action="/forumPost" method="POST">
-        <label for="forumMessage">Message:</label>
-        <input type="text" id="forumMessage" name="forumMessage" required><br><br>
+        <input placeholder="Message" type="text" id="forumMessage" name="forumMessage" required><br><br>
+        <input placeholder="Image link [Optional]" type="text" id="forumMsgImage" name="forumMsgImage"><br><br>
         <div class="buttonContainer">
-            <button type="submit">Post</button>
+            <button type="submit" id="loginBtn">Post</button>
         </div>
     </form>
 

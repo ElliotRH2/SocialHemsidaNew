@@ -22,15 +22,14 @@
         </nav>
     </header>
 
-    <h1>Delete an account</h1>
-    <form action="/deleteAcc" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
+    <h1 class="deleteAccText">Delete an account</h1>
+    <div class="deleteAccContainerDiv">
+        <form action="/deleteAcc" method="POST">
+            <input placeholder="Username" type="text" id="username" name="username" required><br><br>
+            <input placeholder="Password" type="password" id="password" name="password" required><br><br>
+            <button type="submit" id="loginBtn">Delete</button>
+        </form>
+    </div>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-
-        <button type="submit">DELETE</button>
-    </form>
 </body>
 </html>

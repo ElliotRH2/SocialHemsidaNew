@@ -22,16 +22,17 @@
         </nav>
     </header>
     
-    <h1 class="logInText">Log in</h1>
-    <form action="/validateUserData" method="POST">
-        <label for="username">Username:</label>
-        <input type="username" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <div class="buttonContainer">
-            <button type="submit">Submit</button>
-        </div>
-    </form>
+    <div class="loginContainerDiv">
+        <h1 class="logInText">Log in</h1>
+        <form action="/validateUserData" method="POST">
+            <input placeholder="Username" type="username" id="username" name="username" required><br><br>
+            <input placeholder="Password" type="password" id="password" name="password" required><br><br>
+            <div class="buttonContainer">
+                <button type="submit" id="loginBtn">log in</button>
+            </div>
+        </form>
+    </div>
+
     <p style="padding-top: 20px;">Don't have an account? <a href="register.html">Create one here</a></p>
     <p>Delete an account? <a href="deleteAcc.html">Delete here</a></p>
     

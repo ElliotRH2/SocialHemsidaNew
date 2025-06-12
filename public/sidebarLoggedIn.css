@@ -7,7 +7,7 @@
     display: flex;
     overflow-x: hidden;
     flex-direction: column;
-    background: #161a2d;
+    background: var(--sidebar-background-color);
     padding: 25px 20px;
     transition: all 0.4s ease;
     z-index: 1000;
@@ -59,7 +59,7 @@
     height: 1px;
     transform: scaleX(1);
     transform: translateY(-50%);
-    background: #4f52ba;
+    background: var(--accent-color);
     transform-origin: right;
     transition-delay: 0.2s;
   }

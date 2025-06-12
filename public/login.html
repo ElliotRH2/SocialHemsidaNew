@@ -6,6 +6,7 @@
     <title>Login Page</title>
     <link rel="stylesheet" href="assets/colors.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cookieConsent.css">
 </head>
 <body>
     <header id="header">
@@ -27,14 +28,29 @@
         <form action="/validateUserData" method="POST">
             <input placeholder="Username" type="username" id="username" name="username" required><br><br>
             <input placeholder="Password" type="password" id="password" name="password" required><br><br>
+            <button type="submit" id="loginBtn">log in</button>
+    </div>
             <div class="buttonContainer">
-                <button type="submit" id="loginBtn">log in</button>
-            </div>
+                <input type="checkbox" id="tosCheckbox" name="acceptTOS" value="yes" required>
+              I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>
+            </label><br><br>
         </form>
     </div>
-
+ 
     <p style="padding-top: 20px;">Don't have an account? <a href="register.html">Create one here</a></p>
     <p>Delete an account? <a href="deleteAcc.html">Delete here</a></p>
-    
+
+    <div id="cookie-banner" class="cookie-banner" style="display: none;">
+        <p>
+          🍪 We use cookies to keep you logged in and store your username. You can choose to accept or reject non-essential cookies.
+          <a href="#">Learn more</a>.
+        </p>
+        <div class="cookie-buttons">
+          <button id="accept-cookies">Accept</button>
+          <button id="reject-cookies">Reject</button>
+        </div>
+      </div>
+      
+    <script src="cookieConsent.js"></script>
 </body>
 </html>

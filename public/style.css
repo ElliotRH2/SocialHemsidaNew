@@ -57,7 +57,7 @@ button {
     padding: 10px;
     font-weight: bold;
     color: white;
-    background-color: rgb(68, 201, 156);
+    background-color: var(--primary-color);
 }
 
 #usernameHeader {
@@ -79,6 +79,7 @@ button {
     z-index: 900;
     width: 100%;
     max-height: 40px;
+    box-shadow: 0 -6px 10px 5px rgba(0,0,0,0.5);
 }
 
 .logo{
@@ -109,7 +110,7 @@ button {
 }
 
 .headerNav ul li a {
-    color: var(--white-text);
+    color: var(--text-colorBlack);
     text-decoration: none;
     padding: 5px 0;
     position: relative;
@@ -124,7 +125,7 @@ button {
     left: 0;
     bottom: -2px;
     /* Positioning the line just under the text */
-    background-color: var(--white-text);
+    background-color: var(--accent-color);
     transition: width 0.3s ease-in-out;
     /* Controls the animation */
 }
@@ -132,6 +133,10 @@ button {
 /* On hover, expand the line from left to right */
 .headerNav ul li a:hover::after {
     width: 100%;
+}
+
+#tosCheckbox {
+    margin-top: 15px;
 }
 
 /* Responsive adjustments for smaller screens */

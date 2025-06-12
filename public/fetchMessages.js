@@ -2,17 +2,24 @@ function displayMessages(messages) {
     const container = document.getElementById("messagesContainer")
     container.innerHTML = ""
 
-    messages.reverse().forEach(function(msg) {
+    messages.reverse().forEach(function(msg) {        
         const messageDiv = document.createElement("div")
         messageDiv.className = "message"
 
         const messageDivHeader = document.createElement("div")
         messageDivHeader.className = "messageHeader"
         messageDiv.appendChild(messageDivHeader)
-    
+
         const messageContent = document.createElement("p")
         const messageMsg = document.createElement("p")
-        messageContent.innerHTML = `<strong>Post by ${msg.username}`
+        messageContent.innerHTML = `<strong>@${msg.username}`
+        messageContent.className = "userWithPfp"
+
+        const pfpElement = document.createElement("img")
+        pfpElement.className = "pfp"
+        pfpElement.src = msg.userRef.profilePicture
+        messageDivHeader.appendChild(pfpElement)
+
         //messageContent.innerHTML = `<strong>Posted by ${msg.username}<br></strong> ${msg.message}`
         messageMsg.innerHTML = `${msg.message}`
         messageDivHeader.appendChild(messageContent)
@@ -48,21 +55,27 @@ function displayMessages(messages) {
         messageDiv.appendChild(lineBreak)
 
         // Add potential comments
-        if (Array.isArray(msg.comments) && msg.comments.length > 0) {
-            console.log("found comment(s)")
-
+        if (Array.isArray(msg.comments) && msg.comments.length > 0) { // only if comments array has comments
             let commentCount = msg.comments.length
-            const titleComment = document.createElement("p")
+            const titleComment = document.createElement("button")
             titleComment.innerHTML = "Comments: " + commentCount
+            titleComment.className = "viewCommentsBtn"
+            titleComment.addEventListener("click", function() {
+                commentDisplayDiv.classList.toggle("displayNone")
+            })
             messageDiv.appendChild(titleComment)
 
             const commentDisplayDiv = document.createElement("div")
             commentDisplayDiv.className = "commentDisplayDiv"
+            commentDisplayDiv.classList.add("displayNone")
 
             // Loop through all the comments and display them
             msg.comments.forEach(function(comment) {
                 const userCommentDiv = document.createElement("div")
                 userCommentDiv.className = "userComment"
+
+                const commentPfpDiv = document.createElement("div")
+                commentPfpDiv.className = "commentPfp"
 
                 const commentUser = document.createElement("p")
                 commentUser.innerHTML = `<strong>@${comment.user}</strong>`
@@ -76,13 +89,23 @@ function displayMessages(messages) {
                 timestampComment.innerHTML = `<strong>Date posted:</strong> ${new Date(comment.date).toLocaleString()}`
                 timestampComment.style.fontSize = "10px"
 
-                userCommentDiv.appendChild(commentUser)
+                const pfpElementComment = document.createElement("img")
+                pfpElementComment.className = "pfp"
+
+                if(comment.userRef.profilePicture) {
+                    pfpElementComment.src = comment.userRef.profilePicture
+                }
+
+                commentPfpDiv.appendChild(pfpElementComment)
+                commentPfpDiv.appendChild(commentUser)
+
+                userCommentDiv.appendChild(commentPfpDiv)
                 userCommentDiv.appendChild(commentMessageP)
                 userCommentDiv.appendChild(timestampComment)
                 commentDisplayDiv.appendChild(userCommentDiv)
             });
 
-            messageDiv.appendChild(commentDisplayDiv)
+            messageDiv.appendChild(commentDisplayDiv) // Add the div with all the comments to the forum post
         }
 
         // Html elements to add comments on each post
@@ -103,7 +126,7 @@ function displayMessages(messages) {
         commentInputMsg.placeholder = "Add comment"
         //commentInputImg.placeholder = "Image link [optional]"
         commentIdInput.setAttribute("type", "hidden")
-        commentIdInput.value = msg.id
+        commentIdInput.value = msg._id
 
         commentInputMsg.setAttribute("type", "text")
         commentInputMsg.setAttribute("id", "forumMessageComment")
@@ -150,3 +173,7 @@ window.onload = function() {
             console.error("Error loading messages:", error)
         })
 }
+
+// Add buttons to delete posts only on the users posts by checking their loggedIn cookie
+// When the delete button is clicked, if the loggedIn cookie matches with posts username, delete it
+// Set up deletePosts route to delete and save the posts. 

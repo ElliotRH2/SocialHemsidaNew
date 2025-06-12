@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="assets/colors.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="sidebarLoggedIn.css">
+    <link rel="stylesheet" href="profile.css">
 </head>
 <body>
     <header id="header">
@@ -24,7 +25,7 @@
 
     <aside class="sidebar">
         <div class="sidebar-header">
-          <img src="logo\logochat.png" alt="logo" />
+          <img src="logo\logonew.png" alt="logo" />
           <h2>Chat</h2>
         </div>
         <ul class="sidebar-links">
@@ -68,8 +69,21 @@
     <label for="realName">Username:</label>
     <input type="text" id="usernameDisplayInput" name="username"><br><br>
 
+    <label for="profilePicture">Profile picture</label>
+    <img id="profilePic" src="" alt="">
+
+    <form action="/updateProfile" method="POST">
+      <input placeholder="Profile picture link" type="text" id="profilePicture" name="profilePicture"><br><br>
+      <div class="buttonContainer">
+          <button type="submit" id="loginBtn">Save</button>
+      </div>
+  </form>
+
     <p>Delete an account? <a href="deleteAcc.html">Delete here</a></p>
+
+    <p>Reset cookie consent? <a href="/promptCookies">Click here</a></p>
     
     <script src="profile.js"></script>
+    <script src="fetchUserData.js"></script>
 </body>
 </html>

@@ -1,0 +1,31 @@
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fefefe;
+    color: #333;
+    padding: 1rem;
+    border-top: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: sans-serif;
+    z-index: 9999;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .cookie-buttons button {
+    margin-left: 10px;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .cookie-buttons button:nth-child(2) {
+    background: #6c757d;
+  }
+  

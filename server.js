@@ -1,34 +1,81 @@
 const express = require("express")
 const cookieParser = require("cookie-parser")
+const mongoose = require("mongoose")
+const path = require("path")
+
 const app = express()
 const PORT = 3000
-const path = require("path")
-const fs = require("fs")
 
-// File paths for json files
-const UsersFilePath = path.join(__dirname, "users.json")
-const MessagesFilePath = path.join(__dirname, "messages.json")
+const session = require("express-session");
 
-function loadUsers() {
-    try {
-        const data = fs.readFileSync(UsersFilePath, "utf8")
-        return JSON.parse(data) 
-    } catch (err) {
-        return []  
-    }
-}
+app.use(session({
+  secret: "mySuperSecretKey", 
+  resave: false,
+  saveUninitialized: false, 
+  cookie: {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false, 
+  }
+}))
 
-function saveUsers(users) {
-    const data = JSON.stringify(users, null, 2)  
-    fs.writeFileSync(UsersFilePath, data, "utf8")
-}
+// MongoDB Connection URI
+const uri = "mongodb+srv://ElliotRh:cUik8d8YqUQiNO5u@socialwebsite.uk78u.mongodb.net/MainDB" 
+const dbName = "MainDB"  
 
-// Parsed json into an arary of users
-let users = loadUsers()
+// Connect to MongoDB using Mongoose
+mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
+    console.log("Connected to MongoDB Atlas!")
+})
+.catch((error) => {
+    console.error("Error connecting to MongoDB:", error)
+})
 
-app.use(cookieParser())
+// Define the User Schema
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  password: { type: String, required: true },
+  profilePicture: { 
+    type: String, 
+    default: "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg" 
+}  // Give a default profile pic 
+})
+
+// Create the User Model
+const User = mongoose.model("User", userSchema)
+
+const Schema = mongoose.Schema
+
+// Define the Comment schema (used inside the forum post schema)
+const commentSchema = new Schema({
+    user: { type: String, required: true },
+    userRef: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    commentMessage: { type: String, required: true },
+    date: { type: Date, default: Date.now },
+})
+
+// Define the Post Schema
+const forumPostSchema = new Schema({
+  message: { type: String, required: true },
+  username: { type: String, required: true },
+  userRef: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to User model
+  imageLink: { type: String, default: null },
+  date: { type: Date, default: Date.now },
+  comments: [commentSchema], // Use the comment schema 
+})
+
+// Create the Post Model
+const ForumPost = mongoose.model("ForumPost", forumPostSchema)
+
+module.exports = ForumPost
+
+app.use(cookieParser("cookie-key"))
 app.use(express.static("public"))
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
 
 // Automatically redirect to login route
 app.get("/", (req, res) => {
@@ -45,18 +92,10 @@ app.get("/login", (req, res) => {
     res.sendFile(__dirname + "/public/login.html")
 })
 
-/*
-app.get("/loginUser", (req, res) => {
-    res.cookie("loggedIn", "true")
-    res.redirect("/loggedIn")
-})
-*/
-
-// If a user is logged in, greet them with their cookies username
+// If a user is logged in
 app.get("/loggedIn", (req, res) => {
-    if (req.cookies.loggedIn) {
-        res.sendFile(__dirname + "/public/loggedIn.html") // If we wanna use a loggedIn html page
-        const username = req.cookies.loggedIn
+    if (req.cookies.loggedIn || req.session.user) {
+        res.sendFile(__dirname + "/public/loggedIn.html") // send the loggedIn html page
     } else {
         res.redirect("/login")
     }
@@ -69,221 +108,299 @@ app.get("/logout", (req, res) => {
 })
 
 // When a user tries to log in, validate to check if theres an account matching their details
-app.post("/validateUserData", (req, res) => {
-    const inputPassword = req.body.password;
-    const inputName = req.body.username;
+app.post("/validateUserData", async (req, res) => {
+    const inputPassword = req.body.password
+    const inputName = req.body.username
+    const acceptTOS = req.body.acceptTOS
 
-    console.log("Entered password:", inputPassword);
-    console.log("Entered Name:", inputName);
+    if (!acceptTOS) {
+        console.log(acceptTOS)
+        return
+    }
 
-    let userFound = false;  
-    let passwordCorrect = false;  
+    try {
+        // Find user by username
+        const user = await User.findOne({ name: inputName })
 
-    for (let index = 0; index < users.length; index++) {
-        if (users[index].name === inputName) {
-            userFound = true;
-            if (users[index].password === inputPassword) {
-                passwordCorrect = true;
-                res.cookie("loggedIn", inputName);
-                return res.redirect("/loggedIn");  
-            } else {
-                return res.send("<h1>Wrong password!</h1>");
-            }
+        // Check if user exists
+        if (!user) {
+            return res.send("<h1>Wrong username!</h1>")
         }
-    }
 
-    if (userFound && !passwordCorrect) {
-        return res.send("<h1>Wrong password!</h1>");
-    }
+        // Check if the password is correct (for testing, no hashing here)
+        if (user.password === inputPassword) {
+            // If username and password are correct, set a cookie and redirect to the loggedIn page
+            if (req.cookies.cookie_consent === "accepted") { // Only consent
+                res.cookie("loggedIn", inputName)
+                console.log("Saved cookie with username")
+            } else {
+                 req.session.user = {inputName} // Use session if no cookies consent
+                 console.log("Using session: ", inputName)
+            }
+            return res.redirect("/loggedIn")
+        } else {
+            // If password is incorrect
+            return res.send("<h1>Wrong password!</h1>")
+        }
 
-    if (!userFound) {
-        return res.send("<h1>Wrong username!</h1>");
+    } catch (err) {
+        console.error("Error during login:", err)
+        return res.status(500).send("<h1>Server error</h1>")
     }
-
-    res.send("<h1>Wrong username and password!</h1>");
-});
+})
 
 app.get("/register", (req, res) => {
-    res.sendFile(__dirname + "/public/register.html")  
+    res.sendFile(__dirname + "/public/register.html")
 })
 
-// When a user creates a new account
-app.post("/register", (req, res) => {
-    const newName = req.body.username
-    const newPassword = req.body.password
+app.post("/register", async (req, res) => {
+    const newName = req.body.username  
+    const newPassword = req.body.password   
+  
+    try {
+      // Check if the user already exists in the database
+      const existingUser = await User.findOne({ name: newName })
+  
+      if (existingUser) {
+        // If the user already exists, return an error
+        return res.status(400).json({ message: "Username is already taken" })
+      }
+  
+      // If the user doesnt exist, create a new User instance
+      const newUser = new User({
+        name: newName,
+        password: newPassword, 
+      })
+  
+      // Save the new user to the database
+      await newUser.save()
+  
+      console.log(`New user created: ${newName}`)
 
-    for (let index = 0; index < users.length; index++) {
-        if (users[index].name === newName)
-        {
-            return res.send("<h1>Username already taken. Try a different one.</h1>")
-        }
+      if (req.cookies.cookie_consent === "accepted") {
+        res.cookie("loggedIn", newName) // Save the username in a cookie if cookie consent is accepted
+        console.log("Saved cookie with username")
+      } else {
+        console.log("Saving username with session: ", newName)
+        req.session.user = {newName} 
+      }
+      
+      res.redirect("/loggedIn")  // Redirect to the loggedIn page after registration
+    } catch (err) {
+      console.error("Error during registration:", err)
+      res.status(500).json({ message: "Server error" })
     }
-
-    users.push({ name: newName, password: newPassword }) // Push new data to users array
-    console.log(`New user created: ${newName}`)
-
-    saveUsers(users) // Save new user data in json
-    res.cookie("loggedIn", newName) // Save username in a cookie
-    res.redirect("/loggedIn")
-})
+  })
 
 app.get("/deleteAcc", (req, res) => {
     res.sendFile(__dirname + "/public/deleteAcc.html")  
 })
 
-app.post("/deleteAcc", (req, res) => {
+app.post("/deleteAcc", async (req, res) => {
     const deleteName = req.body.username
     const deletePassword = req.body.password
 
-    const initialUserCount = users.length
+    try {
+        // Find the user in the database
+        const user = await User.findOne({ name: deleteName })
 
-    const updatedUsers = users.filter(user => 
-        !(user.name === deleteName && user.password === deletePassword)
-    )
+        // Check if the user exists and if the password matches
+        if (!user || user.password !== deletePassword) {
+            return res.send("<h1>Account not found or incorrect credentials.</h1>")
+        }
 
-    if (updatedUsers.length === initialUserCount) {
-        return res.send("<h1>Account not found or incorrect credentials.</h1>")
+        // Delete the user from the database
+        await User.deleteOne({ name: deleteName })
+        console.log(`User ${deleteName} has been deleted.`)
+
+        // Delete all posts created by the user
+        await ForumPost.deleteMany({ username: deleteName })
+        console.log(`All posts by ${deleteName} have been deleted.`)
+
+        // Remove the users comments from all posts
+        await ForumPost.updateMany(
+            {}, // No filter, meaning we wanna update all posts
+            { $pull: { comments: { user: deleteName } } } // Remove comments where user matches using mongoDB pull operator (removes elements form array based on a condition)
+        )
+        console.log(`All comments by ${deleteName} have been deleted.`)
+
+        res.clearCookie("loggedIn")
+        res.redirect("/login")
+
+    } catch (err) {
+        console.error("Error during account deletion:", err)
+        res.status(500).send("<h1>Server error occurred during account deletion</h1>")
     }
-
-    // Save and load users after deleting account
-    saveUsers(updatedUsers)
-    users = loadUsers()
-
-    // Delete all the users forum posts
-    fs.readFile(MessagesFilePath, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading file:", err);
-            return res.send("Error saving the message.");
-        }   
-
-        let usernameToDelete = req.cookies.loggedIn || deleteName // use deleteName if the user wanna delete the account while not being logged in since then they have no cookie
-        let messages = JSON.parse(data);
-        messages = messages.filter(post => post.username !== usernameToDelete); // Return an array without any posts belonging to the user
-
-        // Save the updated messages to the JSON file
-        fs.writeFile(MessagesFilePath, JSON.stringify(messages, null, 2), (err) => {
-            if (err) {
-                console.error("Error writing file:", err);
-                return res.send("Error saving the message.");
-            }
-        });
-    });
-
-    res.clearCookie("loggedIn")
-    res.redirect("/login")
 })
 
 app.get("/forumPost", (req, res) => {
-    // Read the messages from the JSON file (Not needed now)
-    fs.readFile(MessagesFilePath, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading file:", err)
-            return res.send("Error loading messages.")
-        }
-        // Parse the messages
-        const messages = JSON.parse(data || "[]")  // If file is empty, return an empty array
-        // Render the HTML page and send the messages to the client
-        res.sendFile(path.join(__dirname, "public", "forums.html"))
-    });
-});
+  const consent = req.cookies.cookie_consent 
 
-app.post("/forumPost", (req, res) => {
+  // If cookies are rejected, ask for consent
+  if (consent !== "accepted") {
+    // Show page asking for cookie consent
+    res.clearCookie("cookie_consent", { path: "/" })
+    res.sendFile(path.join(__dirname, "public", "cookiesRequired.html"))
+    return
+  }
+
+  // If we have consent but no user cookie is set yet
+  if (consent && !req.cookies.loggedIn) {
+    userName = req.session.user.inputName || req.session.user.newName
+    res.cookie("loggedIn", userName )
+    console.log("user consent but no cookie stored, saving: ", userName)
+  }
+
+  // If cookies are accepted, allow forum post access
+  res.sendFile(path.join(__dirname, "public", "forums.html"))
+})
+
+// When a user creates a new forum post
+app.post("/forumPost", async (req, res) => {
     const message = req.body.forumMessage
-    const username = req.cookies.loggedIn
-    const imageLink = req.body.forumMsgImage || null // set to null if image is not provided since its optional
+    const username = req.cookies.loggedIn 
+    const imageLink = req.body.forumMsgImage || null // set to null if image is not provided
 
-    // Read the existing messages from the JSON file
-    fs.readFile(MessagesFilePath, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading file:", err)
-            return res.send("Error saving the message.")
-        }   
+    try {
+        const user = await User.findOne({ name: username })
+        const userId = user._id
 
-        // Parse the current messages and add the new one
-        const messages = JSON.parse(data || "[]")
-
-        const postId = Date.now().toString()
-
-        messages.push({
-            id: postId,
+        // Create a new forum post document
+        const newPost = new ForumPost({
             message: message,
-            username: username, // Store the username with the message
+            username: username,
+            userRef: userId,
             imageLink: imageLink,
-            date: new Date().toISOString(),
-            comments: []
+            comments: [] // Empty array for comments initially
         })
 
-        // Save the updated messages to the JSON file
-        fs.writeFile(MessagesFilePath, JSON.stringify(messages, null, 2), (err) => {
-            if (err) {
-                console.error("Error writing file:", err)
-                return res.send("Error saving the message.")
-            }
-            // Redirect to the same page to reload the messages
-            res.redirect("/forumPost")
-        })
-    })
+        // Save the new post to the forum posts collection
+        await newPost.save()
+
+        // Redirect to the forum page
+        res.redirect("/forumPost")
+
+    } catch (err) {
+        console.error("Error saving post:", err)
+        res.status(500).send("Error saving the message")
+    }
 })
 
-// Messages (forum posts) will be fetched in another js file
-app.get("/getMessages", (req, res) => {
-    // Read the messages from the JSON file
-    fs.readFile(MessagesFilePath, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading file:", err)
-            return res.status(500).send("Error loading messages.")
-        }
-        
-        // Send the messages as JSON response
-        const messages = JSON.parse(data || "[]")  // If file is empty, return an empty array
-        res.json(messages)  // Send the messages as JSON
-    })
+// To fetch messages (forum posts) from another js file
+app.get("/getMessages", async (req, res) => {
+    try {
+        // Fetch all forum posts from the MongoDB collection
+        const posts = await ForumPost.find() 
+
+        .populate("userRef", "profilePicture") // Dynamically populate the posts to include the profile picture
+        .populate("comments.userRef", "profilePicture")
+
+        // Send the posts as a JSON response
+        res.json(posts)  
+    } catch (err) {
+        console.error("Error fetching messages:", err)
+        return res.status(500).send("Error loading messages from the database")
+    }
 })
 
-app.post("/forumPostComment", (req, res) => {
-    console.log("comment post triggered")
-    const postId = req.body.postId
-    const commentMessage = req.body.forumMessageComment
-    const username = req.cookies.loggedIn
+// Handle comments on posts
+app.post("/forumPostComment", async (req, res) => {
+    const postId = req.body.postId  // Post ID to find the specific post (already set no need user input)
+    const commentMessage = req.body.forumMessageComment  // The comment message
+    const username = req.cookies.loggedIn  // The username from cookies
+
+    // If no data is found
+    if (!postId || !commentMessage || !username) {
+        return res.status(400).send("No data found")
+    }
+
+    console.log(postId, commentMessage, username)
     
-    //const imageLink = req.body.forumMsgImage || null // set to null if image is not provided since its optional
+    try {
+        const user = await User.findOne({ name: username })
+        const userId = user._id
 
-    // Read the existing messages from the JSON file
-    fs.readFile(MessagesFilePath, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading file:", err)
-            return res.send("Error saving the comment.")
-        }   
+        // Find the post by its ID in MongoDB by comparing it with the id already given on each post
+        const post = await ForumPost.findOne({ _id: postId })
 
-        // Parse the current messages and add the new one
-        const messages = JSON.parse(data || "[]")
-        
-        const post = messages.find(msg => msg.id === postId)
-
-        if (post) {
-            // Add the comment to the comments array for the post
-            post.comments.push({
-                user: username,
-                commentMessage: commentMessage,
-                date: new Date().toISOString() 
-            })
-
-            // Save the updated messages back to the file
-            fs.writeFile(MessagesFilePath, JSON.stringify(messages, null, 2), (err) => {
-                if (err) {
-                    console.error("Error writing file:", err)
-                    return res.send("Error saving the comment.")
-                }
-                res.redirect("/forumPost")  // Reload the page
-            })
-        } else {
-            res.send("Post not found for the specified user.")
+        if (!post) {
+            return res.status(404).send("Post not found")
         }
-    })
+
+        // Add the comment to the comments array inside the post
+        post.comments.push({
+            user: username,
+            userRef: userId,
+            commentMessage: commentMessage,
+            date: new Date().toISOString()
+        })
+
+        // Save the updated post back to MongoDB
+        await post.save()
+
+        // Redirect to the forum page or send a success response
+        res.redirect("/forumPost")
+    } catch (err) {
+        console.error("Error saving comment:", err)
+        res.status(500).send("Error saving the comment")
+    }
 })
 
 app.get("/profile", (req, res) => {
-    res.sendFile(__dirname + "/public/profile.html")  
+    res.sendFile(__dirname + "/public/profile.html")
+})
+
+app.post("/updateProfile", async (req, res) => {
+    const imageLink = req.body.profilePicture || null
+    const userName = req.cookies.loggedIn
+
+    try {
+        await User.updateOne(
+            { name: userName },
+            { $set: { profilePicture: imageLink } }
+        )
+
+        res.redirect("/profile")
+ 
+    } catch(err) {
+        console.error("Error updating profile pic", err)
+    }
+})
+
+app.get("/getUserData", async (req, res) => {
+    const userName = req.cookies.loggedIn
+
+    try {
+        // Find the user in MongoDB by their name
+        const user = await User.findOne({ name: userName })
+
+        if (user) {
+            res.json({ 
+                success: true, 
+                username: user.name, 
+                profilePicture: user.profilePicture 
+            })
+        } else {
+            res.status(404).json({ success: false, message: "User not found" })
+        }
+    } catch (error) {
+        console.error("Error fetching user data:", error)
+        res.status(500).json({ success: false, message: "Server error" })
+    }
+})
+
+
+app.get("/promptCookies", (req, res) => {
+    res.clearCookie("cookie_consent", { path: "/" })
+    res.sendFile(path.join(__dirname, "public", "cookiesRequired.html"))
+})
+
+app.get("/terms", (req, res) => {
+    res.sendFile(__dirname + "/public/TOS.html")
+})
+
+app.get("/privacy", (req, res) => {
+    res.sendFile(__dirname + "/public/privacy.html")
 })
 
 

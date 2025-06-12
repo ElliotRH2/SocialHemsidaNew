@@ -2,9 +2,14 @@
     /* Preview Pallet Colours */
     --text-colorBlack: #333333;
     --body-background-color: #212121;
-    --header-color: #313131;
+    --header-color: #ffffff;
     --card-background-color: #3f3f3f;
-    --sidebar-background-color: #171717;
+    --sidebar-background-color: #333333;
     --white-text: #ffffff;
     --sidebar-text-color: #e3e3e3;
+
+    --primary-color: #5356b2;
+    --secondary-color: #d198c8;
+    --accent-color: #c680a0;
+    --text-black: #1f1f1f;
  }
